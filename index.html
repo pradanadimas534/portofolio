@@ -6,152 +6,139 @@
 <title>Dimas Januar Pradana — Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#15161c;
-    --panel:#1c1d25;
-    --panel-2:#242631;
-    --line:#2f313c;
-    --cyan:#5ce1e6;
-    --cyan-dim:#2f6f6f;
-    --white:#ffffff;
-    --muted:#9a9ba6;
-    --tile:#0d0e12;
+    --bg:#eef5ff;
+    --panel:rgba(255,255,255,0.86);
+    --panel-solid:#ffffff;
+    --line:#d9e8fb;
+    --cyan:#2fb6e8;
+    --cyan-deep:#1a8fc4;
+    --navy:#132038;
+    --muted:#5c6f8f;
+    --tile:#ffffff;
   }
   *{box-sizing:border-box;}
   html,body{
     margin:0; height:100%; overflow:hidden;
-    background:var(--bg); color:var(--white);
-    font-family:'Poppins',sans-serif;
+    background:var(--bg); color:var(--navy);
+    font-family:'Inter',sans-serif;
   }
-  ::selection{background:var(--cyan); color:#04342c;}
+  ::selection{background:var(--cyan); color:#04324a;}
 
   /* ============ NAV ============ */
   .game-nav{
     position:fixed; top:0; left:0; right:0; z-index:50;
     display:flex; align-items:center; justify-content:space-between;
-    padding:16px 5vw; background:rgba(21,22,28,0.85); backdrop-filter:blur(8px);
+    padding:14px 5vw; background:rgba(255,255,255,0.82); backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
-  .nav-logo{display:flex; align-items:center; gap:10px; font-weight:700; font-size:0.95rem;}
+  .nav-logo{display:flex; align-items:center; gap:9px; font-family:'Poppins'; font-weight:700; font-size:0.92rem; color:var(--navy);}
   .nav-logo .dot{width:10px;height:10px;border-radius:50%; background:var(--cyan);}
   .nav-links{display:flex; gap:8px;}
   .navbtn{
     background:transparent; border:1px solid var(--line); color:var(--muted);
-    font-family:'Poppins'; font-weight:500; font-size:0.8rem;
-    padding:8px 18px; border-radius:8px; cursor:pointer; transition:.15s;
+    font-family:'Poppins'; font-weight:600; font-size:0.78rem;
+    padding:8px 18px; border-radius:999px; cursor:pointer; transition:.15s;
   }
-  .navbtn:hover{border-color:var(--cyan-dim); color:var(--white);}
-  .navbtn.active{background:var(--cyan); color:#04342c; border-color:var(--cyan);}
+  .navbtn:hover{border-color:var(--cyan); color:var(--navy);}
+  .navbtn.active{background:var(--cyan); color:#ffffff; border-color:var(--cyan);}
   @media (max-width:700px){
     .nav-links{gap:4px;}
-    .navbtn{padding:7px 10px; font-size:0.72rem;}
+    .navbtn{padding:7px 10px; font-size:0.7rem;}
   }
 
   /* ============ STAGE ============ */
-  .stage{
-    position:relative; width:100vw; height:100vh; overflow:hidden;
-  }
+  .stage{ position:relative; width:100vw; height:100vh; overflow:hidden; }
   .page{
-    position:absolute; inset:0; display:none; padding-top:76px;
+    position:absolute; inset:0; display:none;
+    background-size:cover; background-position:center; background-color:#dce9fb;
   }
   .page.active{display:block;}
-  .page-inner{
-    height:100%; max-width:1200px; margin:0 auto;
-    display:grid; grid-template-columns:1.1fr 0.9fr; align-items:center;
-    padding:0 6vw; gap:20px;
-  }
-  .page.reverse .page-inner{grid-template-columns:0.9fr 1.1fr;}
-  .page.reverse .text-col{order:2;}
-  .page.reverse .char-col{order:1;}
 
+  /* full-bleed scrim so text stays readable over any background photo */
+  .page::before{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(100deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.78) 32%, rgba(255,255,255,0.25) 55%, transparent 72%);
+  }
+  .page.reverse::before{
+    background:linear-gradient(260deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.78) 32%, rgba(255,255,255,0.25) 55%, transparent 72%);
+  }
+
+  .page-inner{
+    position:relative; z-index:2; height:100%; max-width:1200px; margin:0 auto;
+    display:flex; align-items:center; padding:76px 6vw 0;
+  }
+  .page.reverse .page-inner{ justify-content:flex-end; }
+
+  .text-col{ max-width:460px; }
   .eyebrow{
-    display:block; font-size:0.72rem; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--cyan); margin-bottom:12px; font-weight:600;
+    display:flex; align-items:center; gap:8px;
+    font-family:'Poppins'; font-size:0.72rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--cyan-deep); margin-bottom:12px; font-weight:700;
+  }
+  .eyebrow .diamond{
+    width:10px; height:10px; flex:none;
+    background:linear-gradient(155deg,#d7ecff,#5b9cf2 55%,#173e91);
+    clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
   }
   .text-col h1{
-    font-size:clamp(2rem,4vw,3.1rem); font-weight:700; color:var(--white);
+    font-family:'Poppins'; font-size:clamp(2rem,4vw,3.1rem); font-weight:800; color:var(--navy);
     line-height:1.12; margin:0 0 16px;
   }
   .text-col p.desc{ font-size:0.95rem; color:var(--muted); line-height:1.7; max-width:440px; margin:0 0 22px;}
   .cta{
-    font-family:'Poppins'; font-size:0.82rem; font-weight:600;
-    padding:12px 24px; border-radius:8px; border:none; background:var(--cyan); color:#04342c;
-    cursor:pointer;
+    font-family:'Poppins'; font-size:0.82rem; font-weight:700;
+    padding:12px 26px; border-radius:999px; border:none; background:var(--cyan); color:#ffffff;
+    cursor:pointer; box-shadow:0 8px 18px rgba(47,182,232,0.35);
   }
-  .cta:hover{filter:brightness(1.08);}
-  .cta.ghost{background:transparent; border:1px solid var(--line); color:var(--white);}
-  .cta.ghost:hover{border-color:var(--cyan-dim);}
+  .cta:hover{filter:brightness(1.05);}
+  .cta.ghost{background:#ffffff; border:1px solid var(--line); color:var(--navy); box-shadow:none;}
+  .cta.ghost:hover{border-color:var(--cyan);}
   .cta-row{display:flex; gap:12px; flex-wrap:wrap;}
 
-  /* ============ CHARACTER COLUMN ============ */
-  .char-col{position:relative; height:100%; display:flex; align-items:flex-end; justify-content:center;}
-  .lv-badge{
-    position:absolute; top:16px; right:16px; z-index:2;
-    font-size:0.68rem; color:var(--cyan); border:1px solid var(--cyan-dim);
-    padding:4px 11px; border-radius:6px; letter-spacing:.04em;
-  }
-  .char-frame{
-    position:relative; width:62%; max-width:300px; aspect-ratio:3/4;
-    border-radius:16px 16px 0 0; overflow:hidden; background:var(--panel-2);
-    display:flex; align-items:center; justify-content:center;
-    animation:floatUp 3.2s ease-in-out infinite alternate;
-  }
-  .char-frame img{
-    width:100%; height:100%; object-fit:cover; object-position:center top; display:block;
-  }
-  .char-placeholder{
-    font-size:0.72rem; color:var(--muted); text-align:center; padding:20px;
-    border:1px dashed var(--line); border-radius:12px; margin:14px;
-  }
-  @keyframes floatUp{ from{transform:translateY(0);} to{transform:translateY(-10px);} }
-  .spark{position:absolute; color:var(--cyan); pointer-events:none;}
-  .spark.s1{bottom:26px; left:6%; font-size:14px;}
-  .spark.s2{top:70px; left:2%; font-size:10px; opacity:.7;}
-  .spark.s3{top:30px; right:2%; font-size:11px; opacity:.6;}
-
   @media (max-width:760px){
-    .page-inner{grid-template-columns:1fr !important; text-align:center; padding-top:8px; overflow-y:auto; height:100%;}
-    .page.reverse .text-col, .page.reverse .char-col{order:initial;}
-    .char-col{order:-1; height:38vh; margin-bottom:14px;}
-    .text-col p.desc{margin-left:auto; margin-right:auto;}
-    .cta-row{justify-content:center;}
+    .page-inner{ justify-content:center !important; padding:70px 7vw 0; overflow-y:auto; }
+    .page::before, .page.reverse::before{
+      background:linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.86) 55%, rgba(255,255,255,0.5) 100%);
+    }
+    .text-col{ max-width:100%; text-align:center; }
+    .text-col p.desc{ margin-left:auto; margin-right:auto; }
+    .cta-row{ justify-content:center; }
   }
 
   /* ============ ABOUT: stat bars ============ */
   .stat-block{margin-top:6px; max-width:420px;}
   .stat-row{margin-bottom:14px;}
   .stat-row .lbl{display:flex; justify-content:space-between; font-size:0.78rem; color:var(--muted); margin-bottom:6px;}
-  .stat-row .lbl b{color:var(--white); font-weight:600;}
-  .stat-track{height:8px; background:var(--panel-2); border-radius:999px; overflow:hidden;}
+  .stat-row .lbl b{color:var(--navy); font-weight:700;}
+  .stat-track{height:8px; background:#dfeefb; border-radius:999px; overflow:hidden;}
   .stat-fill{height:100%; background:var(--cyan); border-radius:999px;}
 
   /* ============ PORTFOLIO: project cards ============ */
-  .proj-grid{
-    display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:520px;
-  }
+  .proj-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:520px; }
   .proj-card{
-    background:var(--panel-2); border:1px solid var(--line); border-radius:12px;
-    padding:14px 16px; transition:.15s;
+    background:var(--panel); backdrop-filter:blur(6px);
+    border:1px solid var(--line); border-radius:12px; padding:14px 16px; transition:.15s;
   }
-  .proj-card:hover{border-color:var(--cyan-dim); transform:translateY(-2px);}
-  .proj-card .tag{font-size:0.62rem; color:var(--cyan); letter-spacing:.06em; text-transform:uppercase; display:block; margin-bottom:6px;}
-  .proj-card h4{margin:0 0 6px; font-size:0.92rem; color:var(--white); font-weight:600;}
+  .proj-card:hover{border-color:var(--cyan); transform:translateY(-2px);}
+  .proj-card .tag{font-size:0.62rem; color:var(--cyan-deep); letter-spacing:.06em; text-transform:uppercase; display:block; margin-bottom:6px; font-weight:700;}
+  .proj-card h4{margin:0 0 6px; font-size:0.9rem; color:var(--navy); font-weight:700; font-family:'Poppins';}
   .proj-card p{margin:0; font-size:0.76rem; color:var(--muted); line-height:1.5;}
   @media (max-width:760px){ .proj-grid{grid-template-columns:1fr 1fr; max-width:360px; margin:0 auto;} }
 
   /* ============ CONTACT ============ */
   .contact-list{display:flex; flex-direction:column; gap:10px; max-width:340px;}
   .contact-row{
-    display:flex; align-items:center; gap:12px; background:var(--panel-2);
-    border:1px solid var(--line); border-radius:10px; padding:12px 16px;
-    font-size:0.85rem; color:var(--white); text-decoration:none;
+    display:flex; align-items:center; gap:12px; background:var(--panel); backdrop-filter:blur(6px);
+    border:1px solid var(--line); border-radius:999px; padding:12px 18px;
+    font-size:0.85rem; color:var(--navy); text-decoration:none; font-weight:600;
   }
-  .contact-row:hover{border-color:var(--cyan-dim);}
+  .contact-row:hover{border-color:var(--cyan);}
   .contact-row .ic{
     width:26px; height:26px; border-radius:50%; background:var(--cyan);
-    color:#04342c; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex:none;
+    color:#ffffff; display:flex; align-items:center; justify-content:center; font-size:0.72rem; flex:none;
   }
 
   /* ============ TILE TRANSITION ============ */
@@ -160,24 +147,21 @@
     display:grid; grid-template-columns:repeat(10,1fr); grid-template-rows:repeat(6,1fr);
     pointer-events:none;
   }
-  .tile{background:var(--tile); transform:scaleX(0);}
+  .tile{background:var(--tile); transform:scaleX(0); box-shadow:0 0 0 0.5px var(--line);}
 
   /* ============ MOBILE BLOCK ============ */
   .mobile-block{
     display:none;
     position:fixed; inset:0; z-index:999;
-    background:var(--bg); color:var(--white);
+    background:var(--bg); color:var(--navy);
     flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:30px;
   }
   .mobile-block .code{
-    font-size:5rem; font-weight:800; color:var(--cyan); line-height:1; margin:0 0 14px;
-    letter-spacing:.02em;
+    font-family:'Poppins'; font-size:5rem; font-weight:800; color:var(--cyan-deep); line-height:1; margin:0 0 14px;
   }
-  .mobile-block .msg{
-    font-size:0.95rem; color:var(--muted); max-width:280px; line-height:1.6; margin:0;
-  }
-  .mobile-block .msg b{color:var(--white);}
+  .mobile-block .msg{ font-size:0.95rem; color:var(--muted); max-width:280px; line-height:1.6; margin:0; }
+  .mobile-block .msg b{color:var(--navy);}
   @media (max-width:767px){
     .game-nav, .stage{display:none;}
     .mobile-block{display:flex;}
@@ -202,11 +186,11 @@
 
 <main class="stage">
 
-  <!-- HOME -->
-  <section class="page active" data-page="home">
+  <!-- HOME — ganti background-image di style="" dengan asset kamu -->
+  <section class="page active" data-page="home" style="background-image:url('assets/bg-home.jpg');">
     <div class="page-inner">
       <div class="text-col">
-        <span class="eyebrow">portfolio · dimas</span>
+        <span class="eyebrow"><span class="diamond"></span>portfolio · dimas</span>
         <h1>Dimas Januar<br>Pradana</h1>
         <p class="desc">Mahasiswa Informatika semester 6, fokus di Machine Learning dan pengembangan aplikasi full-stack — dari notebook sampai produk yang benar-benar dipakai orang.</p>
         <div class="cta-row">
@@ -214,25 +198,14 @@
           <button class="cta ghost" onclick="goTo('contact')">kontak</button>
         </div>
       </div>
-      <div class="char-col">
-        <div class="lv-badge">lv. 6</div>
-        <div class="char-frame">
-          <!-- ganti src di bawah dengan foto/ilustrasi milikmu -->
-          <img src="assets/char-home.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-          <div class="char-placeholder" style="display:none;">ganti assets/char-home.png<br>dengan gambar kamu</div>
-        </div>
-        <span class="spark s1">✦</span>
-        <span class="spark s2">✦</span>
-        <span class="spark s3">✦</span>
-      </div>
     </div>
   </section>
 
   <!-- ABOUT -->
-  <section class="page reverse" data-page="about">
+  <section class="page reverse" data-page="about" style="background-image:url('assets/bg-about.jpg');">
     <div class="page-inner">
       <div class="text-col">
-        <span class="eyebrow">about me</span>
+        <span class="eyebrow"><span class="diamond"></span>about me</span>
         <h1>Kenalan Dulu</h1>
         <p class="desc">Berangkat dari jurusan TKJ di SMK, sekarang menekuni Informatika di Politeknik Negeri Banyuwangi dan sedang menjalani Studi Independen Bersertifikat pada jalur Machine Learning di DBS Coding Camp.</p>
         <div class="stat-block">
@@ -254,23 +227,14 @@
           </div>
         </div>
       </div>
-      <div class="char-col">
-        <div class="lv-badge">about</div>
-        <div class="char-frame">
-          <img src="assets/char-about.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-          <div class="char-placeholder" style="display:none;">ganti assets/char-about.png<br>dengan gambar kamu</div>
-        </div>
-        <span class="spark s1">✦</span>
-        <span class="spark s2">✦</span>
-      </div>
     </div>
   </section>
 
   <!-- PORTFOLIO -->
-  <section class="page" data-page="portfolio">
+  <section class="page" data-page="portfolio" style="background-image:url('assets/bg-portfolio.jpg');">
     <div class="page-inner">
       <div class="text-col">
-        <span class="eyebrow">mission log</span>
+        <span class="eyebrow"><span class="diamond"></span>mission log</span>
         <h1>Proyek</h1>
         <p class="desc" style="margin-bottom:16px;">Beberapa proyek yang sudah dan sedang aku kerjakan.</p>
         <div class="proj-grid">
@@ -296,22 +260,14 @@
           </div>
         </div>
       </div>
-      <div class="char-col">
-        <div class="lv-badge">quest</div>
-        <div class="char-frame">
-          <img src="assets/char-portfolio.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-          <div class="char-placeholder" style="display:none;">ganti assets/char-portfolio.png<br>dengan gambar kamu</div>
-        </div>
-        <span class="spark s1">✦</span>
-      </div>
     </div>
   </section>
 
   <!-- CONTACT -->
-  <section class="page reverse" data-page="contact">
+  <section class="page reverse" data-page="contact" style="background-image:url('assets/bg-contact.jpg');">
     <div class="page-inner">
       <div class="text-col">
-        <span class="eyebrow">save file</span>
+        <span class="eyebrow"><span class="diamond"></span>save file</span>
         <h1>Kontak</h1>
         <p class="desc">Terbuka untuk kolaborasi proyek ML atau aplikasi. Hubungi lewat salah satu ini:</p>
         <div class="contact-list">
@@ -319,15 +275,6 @@
           <a class="contact-row" href="mailto:hello@example.com"><span class="ic">@</span>Email</a>
           <a class="contact-row" href="#" onclick="goTo('home'); return false;"><span class="ic">↑</span>Kembali ke Home</a>
         </div>
-      </div>
-      <div class="char-col">
-        <div class="lv-badge">contact</div>
-        <div class="char-frame">
-          <img src="assets/char-contact.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-          <div class="char-placeholder" style="display:none;">ganti assets/char-contact.png<br>dengan gambar kamu</div>
-        </div>
-        <span class="spark s1">✦</span>
-        <span class="spark s2">✦</span>
       </div>
     </div>
   </section>
