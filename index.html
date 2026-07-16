@@ -4,173 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dimas Januar Pradana — Portfolio</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#eef5ff;
-    --panel:rgba(255,255,255,0.86);
-    --panel-solid:#ffffff;
-    --line:#d9e8fb;
-    --cyan:#2fb6e8;
-    --cyan-deep:#1a8fc4;
-    --navy:#132038;
-    --muted:#5c6f8f;
-    --tile:#ffffff;
-  }
-  *{box-sizing:border-box;}
-  html,body{
-    margin:0; height:100%; overflow:hidden;
-    background:var(--bg); color:var(--navy);
-    font-family:'Inter',sans-serif;
-  }
-  ::selection{background:var(--cyan); color:#04324a;}
 
-  /* ============ NAV ============ */
-  .game-nav{
-    position:fixed; top:0; left:0; right:0; z-index:50;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 5vw; background:rgba(255,255,255,0.82); backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
-  }
-  .nav-logo{display:flex; align-items:center; gap:9px; font-family:'Poppins'; font-weight:700; font-size:0.92rem; color:var(--navy);}
-  .nav-logo .dot{width:10px;height:10px;border-radius:50%; background:var(--cyan);}
-  .nav-links{display:flex; gap:8px;}
-  .navbtn{
-    background:transparent; border:1px solid var(--line); color:var(--muted);
-    font-family:'Poppins'; font-weight:600; font-size:0.78rem;
-    padding:8px 18px; border-radius:999px; cursor:pointer; transition:.15s;
-  }
-  .navbtn:hover{border-color:var(--cyan); color:var(--navy);}
-  .navbtn.active{background:var(--cyan); color:#ffffff; border-color:var(--cyan);}
-  @media (max-width:700px){
-    .nav-links{gap:4px;}
-    .navbtn{padding:7px 10px; font-size:0.7rem;}
-  }
-
-  /* ============ STAGE ============ */
-  .stage{ position:relative; width:100vw; height:100vh; overflow:hidden; }
-  .page{
-    position:absolute; inset:0; display:none;
-    background-size:cover; background-position:center; background-color:#dce9fb;
-  }
-  .page.active{display:block;}
-
-  /* full-bleed scrim so text stays readable over any background photo */
-  .page::before{
-    content:""; position:absolute; inset:0;
-    background:linear-gradient(100deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.78) 32%, rgba(255,255,255,0.25) 55%, transparent 72%);
-  }
-  .page.reverse::before{
-    background:linear-gradient(260deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.78) 32%, rgba(255,255,255,0.25) 55%, transparent 72%);
-  }
-
-  .page-inner{
-    position:relative; z-index:2; height:100%; max-width:1200px; margin:0 auto;
-    display:flex; align-items:center; padding:76px 6vw 0;
-  }
-  .page.reverse .page-inner{ justify-content:flex-end; }
-
-  .text-col{ max-width:460px; }
-  .eyebrow{
-    display:flex; align-items:center; gap:8px;
-    font-family:'Poppins'; font-size:0.72rem; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--cyan-deep); margin-bottom:12px; font-weight:700;
-  }
-  .eyebrow .diamond{
-    width:10px; height:10px; flex:none;
-    background:linear-gradient(155deg,#d7ecff,#5b9cf2 55%,#173e91);
-    clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
-  }
-  .text-col h1{
-    font-family:'Poppins'; font-size:clamp(2rem,4vw,3.1rem); font-weight:800; color:var(--navy);
-    line-height:1.12; margin:0 0 16px;
-  }
-  .text-col p.desc{ font-size:0.95rem; color:var(--muted); line-height:1.7; max-width:440px; margin:0 0 22px;}
-  .cta{
-    font-family:'Poppins'; font-size:0.82rem; font-weight:700;
-    padding:12px 26px; border-radius:999px; border:none; background:var(--cyan); color:#ffffff;
-    cursor:pointer; box-shadow:0 8px 18px rgba(47,182,232,0.35);
-  }
-  .cta:hover{filter:brightness(1.05);}
-  .cta.ghost{background:#ffffff; border:1px solid var(--line); color:var(--navy); box-shadow:none;}
-  .cta.ghost:hover{border-color:var(--cyan);}
-  .cta-row{display:flex; gap:12px; flex-wrap:wrap;}
-
-  @media (max-width:760px){
-    .page-inner{ justify-content:center !important; padding:70px 7vw 0; overflow-y:auto; }
-    .page::before, .page.reverse::before{
-      background:linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.86) 55%, rgba(255,255,255,0.5) 100%);
-    }
-    .text-col{ max-width:100%; text-align:center; }
-    .text-col p.desc{ margin-left:auto; margin-right:auto; }
-    .cta-row{ justify-content:center; }
-  }
-
-  /* ============ ABOUT: stat bars ============ */
-  .stat-block{margin-top:6px; max-width:420px;}
-  .stat-row{margin-bottom:14px;}
-  .stat-row .lbl{display:flex; justify-content:space-between; font-size:0.78rem; color:var(--muted); margin-bottom:6px;}
-  .stat-row .lbl b{color:var(--navy); font-weight:700;}
-  .stat-track{height:8px; background:#dfeefb; border-radius:999px; overflow:hidden;}
-  .stat-fill{height:100%; background:var(--cyan); border-radius:999px;}
-
-  /* ============ PORTFOLIO: project cards ============ */
-  .proj-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:520px; }
-  .proj-card{
-    background:var(--panel); backdrop-filter:blur(6px);
-    border:1px solid var(--line); border-radius:12px; padding:14px 16px; transition:.15s;
-  }
-  .proj-card:hover{border-color:var(--cyan); transform:translateY(-2px);}
-  .proj-card .tag{font-size:0.62rem; color:var(--cyan-deep); letter-spacing:.06em; text-transform:uppercase; display:block; margin-bottom:6px; font-weight:700;}
-  .proj-card h4{margin:0 0 6px; font-size:0.9rem; color:var(--navy); font-weight:700; font-family:'Poppins';}
-  .proj-card p{margin:0; font-size:0.76rem; color:var(--muted); line-height:1.5;}
-  @media (max-width:760px){ .proj-grid{grid-template-columns:1fr 1fr; max-width:360px; margin:0 auto;} }
-
-  /* ============ CONTACT ============ */
-  .contact-list{display:flex; flex-direction:column; gap:10px; max-width:340px;}
-  .contact-row{
-    display:flex; align-items:center; gap:12px; background:var(--panel); backdrop-filter:blur(6px);
-    border:1px solid var(--line); border-radius:999px; padding:12px 18px;
-    font-size:0.85rem; color:var(--navy); text-decoration:none; font-weight:600;
-  }
-  .contact-row:hover{border-color:var(--cyan);}
-  .contact-row .ic{
-    width:26px; height:26px; border-radius:50%; background:var(--cyan);
-    color:#ffffff; display:flex; align-items:center; justify-content:center; font-size:0.72rem; flex:none;
-  }
-
-  /* ============ TILE TRANSITION ============ */
-  .tiles{
-    position:absolute; inset:0; z-index:40;
-    display:grid; grid-template-columns:repeat(10,1fr); grid-template-rows:repeat(6,1fr);
-    pointer-events:none;
-  }
-  .tile{background:var(--tile); transform:scaleX(0); box-shadow:0 0 0 0.5px var(--line);}
-
-  /* ============ MOBILE BLOCK ============ */
-  .mobile-block{
-    display:none;
-    position:fixed; inset:0; z-index:999;
-    background:var(--bg); color:var(--navy);
-    flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:30px;
-  }
-  .mobile-block .code{
-    font-family:'Poppins'; font-size:5rem; font-weight:800; color:var(--cyan-deep); line-height:1; margin:0 0 14px;
-  }
-  .mobile-block .msg{ font-size:0.95rem; color:var(--muted); max-width:280px; line-height:1.6; margin:0; }
-  .mobile-block .msg b{color:var(--navy);}
-  @media (max-width:767px){
-    .game-nav, .stage{display:none;}
-    .mobile-block{display:flex;}
-  }
-  @media (hover:none) and (pointer:coarse){
-    .game-nav, .stage{display:none;}
-    .mobile-block{display:flex;}
-  }
-</style>
+<link rel="stylesheet" href="assets/style/style.css">
 </head>
 <body>
 
@@ -187,7 +26,7 @@
 <main class="stage">
 
   <!-- HOME — ganti background-image di style="" dengan asset kamu -->
-  <section class="page active" data-page="home" style="background-image:url('/assets/img/Hero03.jpg');">
+  <section class="page active" data-page="home" style="background-image:url('assets/img/Hero03.jpg');">
     <div class="page-inner">
       <div class="text-col">
         <span class="eyebrow"><span class="diamond"></span>portfolio · dimas</span>
@@ -202,7 +41,7 @@
   </section>
 
   <!-- ABOUT -->
-  <section class="page reverse" data-page="about" style="background-image:url('/assets/img/Hero01.jpg');">
+  <section class="page reverse" data-page="about" style="background-image:url('assets/img/Hero01.jpg');">
     <div class="page-inner">
       <div class="text-col">
         <span class="eyebrow"><span class="diamond"></span>about me</span>
@@ -231,7 +70,7 @@
   </section>
 
   <!-- PORTFOLIO -->
-  <section class="page" data-page="portfolio" style="background-image:url('/assets/img/Hero 02.jpg');">
+  <section class="page" data-page="portfolio" style="background-image:url('assets/img/Hero02.jpg');">
     <div class="page-inner">
       <div class="text-col">
         <span class="eyebrow"><span class="diamond"></span>mission log</span>
@@ -264,7 +103,7 @@
   </section>
 
   <!-- CONTACT -->
-  <section class="page reverse" data-page="contact" style="background-image:url('/assets/img/Hero04.jpg');">
+  <section class="page reverse" data-page="contact" style="background-image:url('assets/img/Hero04.jpg');">
     <div class="page-inner">
       <div class="text-col">
         <span class="eyebrow"><span class="diamond"></span>save file</span>
@@ -287,61 +126,6 @@
   <p class="msg">Maaf, tampilan website ini <b>hanya tersedia versi desktop</b>. Coba buka lagi lewat laptop atau komputer ya.</p>
 </div>
 
-<script>
-(function(){
-  var COLS = 10, ROWS = 6;
-  var tilesWrap = document.getElementById('tiles');
-  for (var i = 0; i < COLS * ROWS; i++) {
-    var d = document.createElement('div');
-    d.className = 'tile';
-    tilesWrap.appendChild(d);
-  }
-  var tiles = tilesWrap.querySelectorAll('.tile');
-  var order = ['home','about','portfolio','contact'];
-  var current = 'home';
-
-  function setActiveNav(target){
-    document.querySelectorAll('.navbtn').forEach(function(b){
-      b.classList.toggle('active', b.dataset.page === target);
-    });
-  }
-
-  window.goTo = function(target){
-    if (target === current) return;
-    var fromRight = order.indexOf(target) > order.indexOf(current);
-
-    tiles.forEach(function(t, idx){
-      var col = idx % COLS;
-      t.style.transition = 'none';
-      t.style.transform = 'scaleX(0)';
-      t.style.transformOrigin = fromRight ? 'right' : 'left';
-      void t.offsetWidth;
-      var delay = (fromRight ? COLS - 1 - col : col) * 16;
-      t.style.transition = 'transform .26s ease ' + delay + 'ms';
-      t.style.transform = 'scaleX(1)';
-    });
-
-    setTimeout(function(){
-      document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-      document.querySelector('.page[data-page="' + target + '"]').classList.add('active');
-      setActiveNav(target);
-      current = target;
-
-      tiles.forEach(function(t, idx){
-        var col = idx % COLS;
-        var delay = (fromRight ? COLS - 1 - col : col) * 16;
-        t.style.transition = 'transform .26s ease ' + (delay + 70) + 'ms';
-        t.style.transformOrigin = fromRight ? 'left' : 'right';
-        t.style.transform = 'scaleX(0)';
-      });
-    }, COLS * 16 + 300);
-  };
-
-  document.querySelectorAll('.navbtn').forEach(function(b){
-    b.addEventListener('click', function(){ goTo(b.dataset.page); });
-  });
-})();
-</script>
-
+<script src="assets/style/script.js"></script>
 </body>
 </html>
