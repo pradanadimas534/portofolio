@@ -270,12 +270,51 @@ html, body {
    PORTFOLIO GRID
 =========================================================== */
 
+.puzzle-shell{
+    width:min(100%, 840px);
+    position:relative;
+    padding-left:48px;
+}
+
+.puzzle-controls{
+    position:absolute;
+    left:0;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    justify-content:flex-start;
+    z-index:5;
+}
+
+.puzzle-arrow{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    border:1px solid rgba(19, 32, 56, 0.14);
+    border-radius:999px;
+    background:rgba(255,255,255,0.92);
+    color:var(--navy);
+    font-size:1.2rem;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(7, 18, 35, 0.12);
+    transition:transform .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.puzzle-arrow:hover{
+    transform:translateY(-1px);
+    border-color:var(--cyan);
+    color:var(--cyan-deep);
+}
+
 .puzzle-grid{
     display:flex;
     flex-direction:column;
     align-items:stretch;
     gap:12px;
-    width:min(100%, 840px);
+    width:100%;
     margin-top:8px;
     margin-left:0;
     padding:6px 0 10px;

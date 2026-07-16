@@ -320,6 +320,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const GITHUB_USERNAME = 'pradanadimas534';
   const projectsContainer = document.getElementById('githubProjects');
   if (projectsContainer) {
-    new GithubProjects(GITHUB_USERNAME, projectsContainer, { limit: 6 }).load();
+    const projectsApp = new GithubProjects(GITHUB_USERNAME, projectsContainer, { limit: 6 });
+
+    document.querySelectorAll('.puzzle-arrow').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const direction = Number(btn.dataset.direction || 1);
+        projectsApp._move(direction);
+      });
+    });
+
+    projectsApp.load();
   }
 });
