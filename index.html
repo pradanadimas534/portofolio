@@ -1,131 +1,129 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dimas Januar Pradana — Portfolio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
 
-<link rel="stylesheet" href="assets/style/style.css">
+  <link rel="stylesheet" href="assets/style/style.css">
 </head>
+
 <body>
 
-<nav class="game-nav">
-  <div class="nav-logo"><span class="dot"></span>Dimas.dev</div>
-  <div class="nav-links">
-    <button class="navbtn active" data-page="home">home</button>
-    <button class="navbtn" data-page="about">about</button>
-    <button class="navbtn" data-page="portfolio">portfolio</button>
-    <button class="navbtn" data-page="contact">contact</button>
+  <nav class="game-nav">
+    <div class="nav-logo"><span class="dot"></span>Dimasukangoding.dev</div>
+    <div class="nav-links">
+      <button class="navbtn active" data-page="home">home</button>
+      <button class="navbtn" data-page="about">about</button>
+      <button class="navbtn" data-page="portfolio">portfolio</button>
+      <button class="navbtn" data-page="contact">contact</button>
+    </div>
+  </nav>
+
+  <main class="stage">
+
+    <!-- HOME — ganti background-image di style="" dengan asset kamu -->
+    <section class="page active" data-page="home" style="background-image:url('assets/img/Hero03.jpg');">
+      <div class="page-inner">
+        <div class="text-col">
+          <span class="eyebrow"><span class="diamond"></span>portfolio · dimas</span>
+          <h1>Dimas Januar<br>Pradana</h1>
+          <p class="desc">Hanya manusia biasa makan nasi nggak pake sendok suka anak kecil tapi bukan pedofil- Tiap hari
+            maen blue archive dengan visi misi menjaga kivotos agar tidak chaos </p>
+          <div class="cta-row">
+            <button class="cta" onclick="goTo('portfolio')">Telah di buat</button>
+            <button class="cta ghost" onclick="goTo('contact')">Info</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="page reverse" data-page="about" style="background-image:url('assets/img/Hero01.jpg');">
+      <div class="page-inner">
+        <div class="text-col">
+          <span class="eyebrow"><span class="diamond"></span>about me</span>
+          <h1>Kenalan Dulu</h1>
+          <p class="desc">Eks anak TKJ pas SMK, sekarang kuliah Informatika di Politeknik Negeri Banyuwangi. Lagi ikut
+            Studi Independen Bersertifikat jalur Machine Learning di DBS Coding Camp — biar makin lincah ngoprek model
+            sampai bener-bener nurut.</p>
+          <div class="stat-block">
+            <div class="stat-row">
+              <div class="lbl"><span>Python / ML</span><b>90%</b></div>
+              <div class="stat-track">
+                <div class="stat-fill" style="width:90%"></div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="lbl"><span>FastAPI</span><b>85%</b></div>
+              <div class="stat-track">
+                <div class="stat-fill" style="width:85%"></div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="lbl"><span>Flutter</span><b>78%</b></div>
+              <div class="stat-track">
+                <div class="stat-fill" style="width:78%"></div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="lbl"><span>React / Next.js</span><b>65%</b></div>
+              <div class="stat-track">
+                <div class="stat-fill" style="width:65%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO — kartu-kartu di bawah ini narik otomatis dari GitHub, lihat script.js -->
+    <section class="page" data-page="portfolio" style="background-image:url('assets/img/Hero02.jpg');">
+      <div class="page-inner">
+        <div class="text-col">
+          <div class="puzzle-grid" id="githubProjects">
+            <p class="puzzle-status">Menarik data repo dari GitHub…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="page reverse" data-page="contact" style="background-image:url('assets/img/Hero04.jpg');">
+      <div class="page-inner">
+        <div class="text-col">
+          <span class="eyebrow"><span class="diamond"></span>save file</span>
+          <h1>Kontak</h1>
+          <p class="desc">Mau ngobrolin proyek ML atau bikin aplikasi bareng? Gas, langsung hubungi lewat salah satu
+            ini:</p>
+          <div class="contact-list">
+            <a class="contact-row" href="https://huggingface.co/dimaspradana" target="_blank" rel="noopener"><span
+                class="ic">HF</span>Hugging Face</a>
+            <a class="contact-row" href="mailto:hello@example.com"><span class="ic">@</span>Email</a>
+            <a class="contact-row" href="#" onclick="goTo('home'); return false;"><span class="ic">↑</span>Kembali ke
+              Home</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="tiles" id="tiles"></div>
+  </main>
+
+  <div class="mobile-block">
+    <p class="code">404</p>
+    <p class="msg">Maaf, tampilan website ini <b>hanya tersedia versi desktop</b>. Coba buka lagi lewat laptop atau
+      komputer ya.</p>
   </div>
-</nav>
 
-<main class="stage">
-
-  <!-- HOME — ganti background-image di style="" dengan asset kamu -->
-  <section class="page active" data-page="home" style="background-image:url('assets/img/Hero03.jpg');">
-    <div class="page-inner">
-      <div class="text-col">
-        <span class="eyebrow"><span class="diamond"></span>portfolio · dimas</span>
-        <h1>Dimas Januar<br>Pradana</h1>
-        <p class="desc">Mahasiswa Informatika semester 6, fokus di Machine Learning dan pengembangan aplikasi full-stack — dari notebook sampai produk yang benar-benar dipakai orang.</p>
-        <div class="cta-row">
-          <button class="cta" onclick="goTo('portfolio')">lihat proyek →</button>
-          <button class="cta ghost" onclick="goTo('contact')">kontak</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABOUT -->
-  <section class="page reverse" data-page="about" style="background-image:url('assets/img/Hero01.jpg');">
-    <div class="page-inner">
-      <div class="text-col">
-        <span class="eyebrow"><span class="diamond"></span>about me</span>
-        <h1>Kenalan Dulu</h1>
-        <p class="desc">Berangkat dari jurusan TKJ di SMK, sekarang menekuni Informatika di Politeknik Negeri Banyuwangi dan sedang menjalani Studi Independen Bersertifikat pada jalur Machine Learning di DBS Coding Camp.</p>
-        <div class="stat-block">
-          <div class="stat-row">
-            <div class="lbl"><span>Python / ML</span><b>90%</b></div>
-            <div class="stat-track"><div class="stat-fill" style="width:90%"></div></div>
-          </div>
-          <div class="stat-row">
-            <div class="lbl"><span>FastAPI</span><b>85%</b></div>
-            <div class="stat-track"><div class="stat-fill" style="width:85%"></div></div>
-          </div>
-          <div class="stat-row">
-            <div class="lbl"><span>Flutter</span><b>78%</b></div>
-            <div class="stat-track"><div class="stat-fill" style="width:78%"></div></div>
-          </div>
-          <div class="stat-row">
-            <div class="lbl"><span>React / Next.js</span><b>65%</b></div>
-            <div class="stat-track"><div class="stat-fill" style="width:65%"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PORTFOLIO -->
-  <section class="page" data-page="portfolio" style="background-image:url('assets/img/Hero02.jpg');">
-    <div class="page-inner">
-      <div class="text-col">
-        <span class="eyebrow"><span class="diamond"></span>mission log</span>
-        <h1>Proyek</h1>
-        <p class="desc" style="margin-bottom:16px;">Beberapa proyek yang sudah dan sedang aku kerjakan.</p>
-        <div class="proj-grid">
-          <div class="proj-card">
-            <span class="tag">Capstone</span>
-            <h4>KarirKu</h4>
-            <p>Analisis CV dan rekomendasi kerja berbasis AI dengan FastAPI.</p>
-          </div>
-          <div class="proj-card">
-            <span class="tag">Flutter</span>
-            <h4>KasirKu</h4>
-            <p>Aplikasi kasir dengan Firebase Auth dan backup otomatis.</p>
-          </div>
-          <div class="proj-card">
-            <span class="tag">Deep Learning</span>
-            <h4>Bitcoin LSTM</h4>
-            <p>Forecasting harga dengan Seq2Seq dan Teacher Forcing.</p>
-          </div>
-          <div class="proj-card">
-            <span class="tag">Computer Vision</span>
-            <h4>Plant Disease CNN</h4>
-            <p>Klasifikasi penyakit tanaman, akurasi sekitar 94%.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="page reverse" data-page="contact" style="background-image:url('assets/img/Hero04.jpg');">
-    <div class="page-inner">
-      <div class="text-col">
-        <span class="eyebrow"><span class="diamond"></span>save file</span>
-        <h1>Kontak</h1>
-        <p class="desc">Terbuka untuk kolaborasi proyek ML atau aplikasi. Hubungi lewat salah satu ini:</p>
-        <div class="contact-list">
-          <a class="contact-row" href="https://huggingface.co/dimaspradana" target="_blank" rel="noopener"><span class="ic">HF</span>Hugging Face</a>
-          <a class="contact-row" href="mailto:hello@example.com"><span class="ic">@</span>Email</a>
-          <a class="contact-row" href="#" onclick="goTo('home'); return false;"><span class="ic">↑</span>Kembali ke Home</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="tiles" id="tiles"></div>
-</main>
-
-<div class="mobile-block">
-  <p class="code">404</p>
-  <p class="msg">Maaf, tampilan website ini <b>hanya tersedia versi desktop</b>. Coba buka lagi lewat laptop atau komputer ya.</p>
-</div>
-
-<script src="assets/style/script.js"></script>
+  <script src="assets/style/script.js"></script>
 </body>
+
 </html>

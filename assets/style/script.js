@@ -132,6 +132,114 @@ class PortfolioApp {
 }
 
 
+class GithubProjects {
+  /**
+   * Ambil repo publik dari GitHub dan render jadi kartu puzzle.
+   * @param {string} username - username GitHub
+   * @param {HTMLElement} container - elemen tempat kartu-kartu dimasukkan
+   * @param {object} options
+   * @param {number} options.limit - berapa repo yang mau ditampilkan (default 6)
+   * @param {boolean} options.hideForks - true = repo hasil fork disembunyikan
+   */
+  constructor(username, container, { limit = 6, hideForks = true } = {}) {
+    this.username = username;
+    this.container = container;
+    this.limit = limit;
+    this.hideForks = hideForks;
+  }
+
+  // dipanggil sekali buat mulai proses fetch + render
+  async load() {
+    this._renderStatus('Menarik data repo dari GitHub…');
+    try {
+      // sort=pushed → urutan dari yang paling baru di-push (paling sering diotak-atik)
+      const url = `https://api.github.com/users/${this.username}/repos?sort=pushed&direction=desc&per_page=100`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+
+      let repos = await res.json();
+      if (this.hideForks) repos = repos.filter((r) => !r.fork);
+      repos = repos.slice(0, this.limit);
+
+      // Acak setiap hari
+      const seed = new Date().getDate();
+
+      repos.sort(() => Math.sin(seed + Math.random()) - 0.5);
+
+      // Tentukan ukuran kartu
+      repos.forEach((repo, index) => {
+
+        if (index === 0) {
+
+          repo.cardSize = "size-large";
+
+        } else if (index <= 2) {
+
+          repo.cardSize = "size-medium";
+
+        } else {
+
+          repo.cardSize = "size-small";
+
+        }
+
+      });
+
+      if (repos.length === 0) {
+        this._renderStatus('Belum ada repo publik.');
+        return;
+      }
+
+      this._render(repos);
+    } catch (err) {
+      this._renderStatus('Gagal ambil data GitHub, coba refresh lagi ya.', true);
+      console.error('[GithubProjects] fetch gagal:', err);
+    }
+  }
+
+  // render semua kartu ke container
+  _render(repos) {
+    this.container.innerHTML = '';
+    repos.forEach((repo) => this.container.appendChild(this._buildCard(repo)));
+  }
+
+  // bikin satu kartu <a> dari data repo
+  _buildCard(repo) {
+    const card = document.createElement('a');
+    card.className = `puzzle-card ${repo.cardSize}`;
+    card.href = repo.html_url;
+    card.target = '_blank';
+    card.rel = 'noopener';
+    // social preview image otomatis dari GitHub, gak perlu upload manual
+    card.style.backgroundImage = `url('https://opengraph.githubassets.com/1/${repo.full_name}')`;
+
+    const tag = repo.language || 'repo';
+    const desc = repo.description || 'Belum ada deskripsi di repo ini.';
+
+    card.innerHTML = `
+      <div class="puzzle-content">
+        <span class="tag">${this._escape(tag)}</span>
+        <h4>${this._escape(repo.name)}</h4>
+        <p>${this._escape(desc)}</p>
+      </div>
+    `;
+    return card;
+  }
+
+  // tampilan pesan loading/error/kosong
+  _renderStatus(message, isError = false) {
+    this.container.innerHTML = `<p class="puzzle-status${isError ? ' is-error' : ''}">${this._escape(message)}</p>`;
+  }
+
+  // biar teks dari GitHub (nama/deskripsi repo) gak bisa nyuntik HTML
+  _escape(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+}
+
+
 // ---------- INIT ----------
 document.addEventListener('DOMContentLoaded', () => {
   const app = new PortfolioApp({
@@ -141,4 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // biar tombol onclick="goTo('...')" langsung di HTML tetap jalan
   window.goTo = (target) => app.goTo(target);
+
+  // ganti 'dimaspradana' kalau username GitHub kamu beda
+  const GITHUB_USERNAME = 'pradanadimas534';
+  const projectsContainer = document.getElementById('githubProjects');
+  if (projectsContainer) {
+    new GithubProjects(GITHUB_USERNAME, projectsContainer, { limit: 6 }).load();
+  }
 });
