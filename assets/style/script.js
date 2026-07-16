@@ -94,14 +94,31 @@ class PortfolioApp {
   // pasang event click ke semua tombol nav
   _bindNav() {
     this.navButtons.forEach((btn) => {
-      btn.addEventListener('click', () => this.goTo(btn.dataset.page));
+      btn.addEventListener('click', () => {
+        if (btn.dataset.page === 'prev') {
+          const index = this.order.indexOf(this.current);
+          const prevPage = this.order[(index - 1 + this.order.length) % this.order.length];
+          this.goTo(prevPage);
+        } else if (btn.dataset.page === 'next') {
+          const index = this.order.indexOf(this.current);
+          const nextPage = this.order[(index + 1) % this.order.length];
+          this.goTo(nextPage);
+        } else {
+          this.goTo(btn.dataset.page);
+        }
+      });
     });
   }
 
   // update tombol nav mana yang kelihatan "active"
   _setActiveNav(target) {
+    const index = this.order.indexOf(target);
     this.navButtons.forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.page === target);
+      if (btn.dataset.page === 'prev') {
+        btn.classList.toggle('is-hidden', index <= 0);
+      } else if (btn.dataset.page === 'next') {
+        btn.classList.toggle('is-hidden', index >= this.order.length - 1);
+      }
     });
   }
 
@@ -166,23 +183,17 @@ class GithubProjects {
 
       repos.sort(() => Math.sin(seed + Math.random()) - 0.5);
 
-      // Tentukan ukuran kartu
+      // Urutkan dari repo yang paling aktif dulu (pushed terbaru)
+      repos.sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+
+      // Tentukan ukuran kartu acak per reload, tapi tetap jaga repo paling aktif di posisi besar
       repos.forEach((repo, index) => {
-
         if (index === 0) {
-
-          repo.cardSize = "size-large";
-
-        } else if (index <= 2) {
-
-          repo.cardSize = "size-medium";
-
+          repo.cardSize = 'size-large';
         } else {
-
-          repo.cardSize = "size-small";
-
+          const sizes = ['size-medium', 'size-small'];
+          repo.cardSize = sizes[Math.floor(Math.random() * sizes.length)];
         }
-
       });
 
       if (repos.length === 0) {

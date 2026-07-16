@@ -17,17 +17,11 @@
 
 <body>
 
-  <nav class="game-nav">
-    <div class="nav-logo"><span class="dot"></span>Dimasukangoding.dev</div>
-    <div class="nav-links">
-      <button class="navbtn active" data-page="home">home</button>
-      <button class="navbtn" data-page="about">about</button>
-      <button class="navbtn" data-page="portfolio">portfolio</button>
-      <button class="navbtn" data-page="contact">contact</button>
-    </div>
-  </nav>
-
   <main class="stage">
+    <div class="page-nav" aria-label="Page navigation">
+      <button class="navbtn navbtn-prev" data-page="prev" aria-label="Previous page">‹</button>
+      <button class="navbtn navbtn-next" data-page="next" aria-label="Next page">›</button>
+    </div>
 
     <!-- HOME — ganti background-image di style="" dengan asset kamu -->
     <section class="page active" data-page="home" style="background-image:url('assets/img/Hero03.jpg');">
@@ -88,6 +82,11 @@
     <section class="page" data-page="portfolio" style="background-image:url('assets/img/Hero02.jpg');">
       <div class="page-inner">
         <div class="text-col">
+          <div class="portfolio-intro">
+            <span class="eyebrow"><span class="diamond"></span>gabutku</span>
+            <h1>Proyek Biasa, Tapi<br>Masih Seru Dilihat</h1>
+            <p class="desc">Cuma proyek-proyek santai yang saya bikin sambil vibe coding, nggak terlalu heboh, tapi tetap ada vibe dan pengalaman belajar di baliknya.</p>
+          </div>
           <div class="puzzle-grid" id="githubProjects">
             <p class="puzzle-status">Menarik data repo dari GitHub…</p>
           </div>

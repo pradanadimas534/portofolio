@@ -41,54 +41,53 @@ html, body {
 
 
 /* ---------- 2. NAV ---------- */
-.game-nav {
+.page-nav {
   position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 50;
-  display: flex;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+}
+
+.page-nav .navbtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 5vw;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line);
-}
-
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-family: 'Poppins';
-  font-weight: 700;
-  font-size: 0.92rem;
-  color: var(--navy);
-}
-.nav-logo .dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--cyan);
-}
-
-.nav-links { display: flex; gap: 8px; }
-
-.navbtn {
+  justify-content: center;
+  width: auto;
+  height: auto;
   background: transparent;
-  border: 1px solid var(--line);
-  color: var(--muted);
+  border: 0;
+  color: rgba(19, 32, 56, 0.8);
   font-family: 'Poppins';
   font-weight: 600;
-  font-size: 0.78rem;
-  padding: 8px 18px;
-  border-radius: 999px;
+  font-size: 2rem;
   cursor: pointer;
   transition: 0.15s;
+  pointer-events: auto;
+  padding: 0 8px;
+  line-height: 1;
 }
-.navbtn:hover { border-color: var(--cyan); color: var(--navy); }
-.navbtn.active { background: var(--cyan); color: #ffffff; border-color: var(--cyan); }
+
+.page-nav .navbtn:hover {
+  color: var(--cyan-deep);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.page-nav .navbtn.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.page-nav .navbtn-prev { left: 16px; }
+.page-nav .navbtn-next { right: 16px; }
 
 @media (max-width: 700px) {
-  .nav-links { gap: 4px; }
-  .navbtn { padding: 7px 10px; font-size: 0.7rem; }
+  .page-nav .navbtn { font-size: 1.6rem; padding: 0 6px; }
+  .page-nav .navbtn-prev { left: 8px; }
+  .page-nav .navbtn-next { right: 8px; }
 }
 
 
@@ -144,6 +143,35 @@ html, body {
 
 /* ---------- 4. TEXT COLUMN ---------- */
 .text-col { max-width: 460px; }
+
+.page[data-page="portfolio"] .text-col {
+  max-width: 780px;
+  width: 100%;
+}
+
+.portfolio-intro {
+  margin-bottom: 18px;
+  padding: 0 2px 10px;
+}
+
+.portfolio-intro .eyebrow {
+  margin-bottom: 10px;
+}
+
+.portfolio-intro h1 {
+  font-family: 'Poppins';
+  font-size: clamp(1.6rem, 2.8vw, 2.3rem);
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.15;
+  margin: 0 0 10px;
+}
+
+.portfolio-intro .desc {
+  margin: 0;
+  max-width: 620px;
+  font-size: 0.92rem;
+}
 
 .eyebrow {
   display: flex;
@@ -244,11 +272,11 @@ html, body {
 
 .puzzle-grid{
     display:grid;
-    grid-template-columns:minmax(0, 1.2fr) minmax(220px, 0.8fr);
-    grid-auto-rows:132px;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    grid-auto-rows:minmax(140px, auto);
     gap:16px;
-    width:min(100%, 760px);
-    margin-top:24px;
+    width:min(100%, 780px);
+    margin-top:8px;
     margin-left:0;
     align-items:stretch;
 }
@@ -257,36 +285,37 @@ html, body {
 
 .puzzle-card{
     position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: 18px;
     text-decoration: none;
     isolation: isolate;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: #0b1428;
-    clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
-    box-shadow: 0 16px 30px rgba(7, 18, 35, 0.23);
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: linear-gradient(145deg, #0d1730, #09111f);
+    box-shadow: 0 10px 20px rgba(7, 18, 35, 0.2);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, filter .2s ease;
+    min-height: 150px;
 }
 
 .puzzle-card::before{
     content: "";
     position: absolute;
     inset: 0;
-
     background-image: inherit;
     background-size: cover;
     background-position: center;
-
-    filter: blur(6px) brightness(.55);
+    filter: blur(8px) brightness(.5);
     transform: scale(1.08);
-
     z-index: 0;
 }
 
 .puzzle-card:hover{
-    transform:translateY(-8px);
-    box-shadow:0 20px 35px rgba(0,0,0,.35);
-    border-color:var(--cyan);
+    transform:translateY(-4px) scale(1.01);
+    box-shadow:0 18px 34px rgba(0,0,0,.3);
+    border-color:rgba(47,182,232,0.6);
+    filter: brightness(1.04);
     z-index:20;
 }
 
@@ -298,9 +327,9 @@ html, body {
     inset:0;
     background:linear-gradient(
         to top,
-        rgba(10,18,38,.95) 0%,
-        rgba(10,18,38,.55) 55%,
-        rgba(10,18,38,.15) 100%
+        rgba(3,10,24,.94) 0%,
+        rgba(8,16,34,.74) 45%,
+        rgba(8,16,34,.2) 100%
     );
     z-index:1;
 }
@@ -315,91 +344,53 @@ html, body {
     flex-direction:column;
     justify-content:flex-end;
     padding:18px 22px 18px 24px;
-    transform: skewX(8deg);
-}
-
-.puzzle-content > * {
-    transform: skewX(-8deg);
+    gap:4px;
 }
 
 .puzzle-content .tag{
-    font-size:.72rem;
+    font-size:.68rem;
     color:#35d7ff;
     font-weight:700;
     text-transform:uppercase;
-    margin-bottom:6px;
-
+    letter-spacing:.16em;
+    margin-bottom:2px;
 }
 
 .puzzle-content h4{
     margin:0;
     color:white;
-    font-size:1.05rem;
+    font-size:1rem;
     font-weight:700;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-
+    letter-spacing:.01em;
 }
 
 .puzzle-content p{
-    margin-top:6px;
+    margin:0;
     color:rgba(255,255,255,.82);
-    font-size:.78rem;
-    line-height:1.5;
+    font-size:.75rem;
+    line-height:1.45;
     display:-webkit-box;
     -webkit-line-clamp:2;
     -webkit-box-orient:vertical;
     overflow:hidden;
-
 }
 
 /* ================= Layout ================= */
 
 .size-large{
-    grid-column:1;
-    grid-row:1 / span 2;
-    min-height:280px;
+    grid-column:span 2;
+    min-height:260px;
 }
 
 .size-medium{
-    grid-column:2;
-    min-height:132px;
+    min-height:170px;
 }
 
 .size-small{
-    min-height:132px;
-}
-
-/* ================= Posisi ================= */
-
-.puzzle-card:nth-child(1){
-    grid-column:1;
-    grid-row:1 / span 2;
-}
-
-.puzzle-card:nth-child(2){
-    grid-column:2;
-    grid-row:1;
-}
-
-.puzzle-card:nth-child(3){
-    grid-column:2;
-    grid-row:2;
-}
-
-.puzzle-card:nth-child(4){
-    grid-column:1;
-    grid-row:3;
-}
-
-.puzzle-card:nth-child(5){
-    grid-column:2;
-    grid-row:3;
-}
-
-.puzzle-card:nth-child(6){
-    display:none;
+    min-height:140px;
 }
 
 /* ================= Status ================= */
@@ -417,16 +408,19 @@ html, body {
 
 @media(max-width:900px){
 .puzzle-grid{
-    display:flex;
-    flex-direction:column;
+    grid-template-columns:1fr;
     width:100%;
     gap:14px;
 }
 
 .puzzle-card{
     min-height:180px;
-    clip-path:polygon(3% 0, 100% 0, 97% 100%, 0 100%);
     border-radius:14px;
+}
+
+.size-large{
+    grid-column:span 1;
+    min-height:180px;
 }
 
 }
