@@ -127,6 +127,7 @@ class PortfolioApp {
     this.pages.forEach((page) => page.classList.remove('active'));
     const nextPage = document.querySelector(`.page[data-page="${target}"]`);
     if (nextPage) nextPage.classList.add('active');
+    window.dispatchEvent(new Event('resize'));
   }
 
   /**
@@ -163,6 +164,9 @@ class GithubProjects {
     this.container = container;
     this.limit = limit;
     this.hideForks = hideForks;
+    this.activeIndex = 0;
+    this._sliderTimer = null;
+    this._resizeHandler = null;
   }
 
   // dipanggil sekali buat mulai proses fetch + render
@@ -211,7 +215,58 @@ class GithubProjects {
   // render semua kartu ke container
   _render(repos) {
     this.container.innerHTML = '';
-    repos.forEach((repo) => this.container.appendChild(this._buildCard(repo)));
+
+    const track = document.createElement('div');
+    track.className = 'puzzle-track';
+    repos.forEach((repo) => track.appendChild(this._buildCard(repo)));
+    this.container.appendChild(track);
+
+    this._startSlider();
+  }
+
+  _move(direction) {
+    const cards = this.container.querySelectorAll('.puzzle-card');
+    if (!cards.length) return;
+    this.activeIndex = (this.activeIndex + direction + cards.length) % cards.length;
+    this._updateSlider();
+  }
+
+  _startSlider() {
+    const cards = this.container.querySelectorAll('.puzzle-card');
+    if (!cards.length) return;
+
+    if (this._sliderTimer) clearInterval(this._sliderTimer);
+    if (this._resizeHandler) window.removeEventListener('resize', this._resizeHandler);
+
+    this._resizeHandler = () => this._updateSlider();
+    window.addEventListener('resize', this._resizeHandler);
+
+    this.activeIndex = 0;
+    this._updateSlider();
+    this._sliderTimer = window.setInterval(() => this._move(1), 3800);
+  }
+
+  _updateSlider() {
+    const cards = this.container.querySelectorAll('.puzzle-card');
+    const track = this.container.querySelector('.puzzle-track');
+    if (!cards.length || !track) return;
+
+    const gap = 16;
+    const cardWidth = 220 + gap;
+    const containerWidth = this.container.getBoundingClientRect().width;
+    const offset = (containerWidth / 2) - (cardWidth / 2) - (this.activeIndex * cardWidth);
+    track.style.transform = `translateX(${offset}px)`;
+
+    cards.forEach((card, index) => {
+      const diff = (index - this.activeIndex + cards.length) % cards.length;
+      const isPrev = diff === cards.length - 1;
+      const isNext = diff === 1;
+      const isHidden = diff > 1 && diff < cards.length - 1;
+      card.classList.toggle('active', index === this.activeIndex);
+      card.classList.toggle('is-prev', isPrev);
+      card.classList.toggle('is-next', isNext);
+      card.classList.toggle('is-hidden', isHidden);
+    });
   }
 
   // bikin satu kartu <a> dari data repo
