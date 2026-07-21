@@ -151,29 +151,18 @@ class PortfolioApp {
 
 
 class GithubProjects {
-  /**
-   * Ambil repo publik dari GitHub dan render jadi kartu puzzle.
-   * @param {string} username - username GitHub
-   * @param {HTMLElement} container - elemen tempat kartu-kartu dimasukkan
-   * @param {object} options
-   * @param {number} options.limit - berapa repo yang mau ditampilkan (default 6)
-   * @param {boolean} options.hideForks - true = repo hasil fork disembunyikan
-   */
-  constructor(username, container, { limit = 6, hideForks = true } = {}) {
+  constructor(username, container, { limit = 8, hideForks = true } = {}) {
     this.username = username;
     this.container = container;
     this.limit = limit;
     this.hideForks = hideForks;
-    this.activeIndex = 0;
     this._sliderTimer = null;
-    this._resizeHandler = null;
+    this._isTransitioning = false;
   }
 
-  // dipanggil sekali buat mulai proses fetch + render
   async load() {
     this._renderStatus('Menarik data repo dari GitHub…');
     try {
-      // sort=pushed → urutan dari yang paling baru di-push (paling sering diotak-atik)
       const url = `https://api.github.com/users/${this.username}/repos?sort=pushed&direction=desc&per_page=100`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
@@ -181,24 +170,6 @@ class GithubProjects {
       let repos = await res.json();
       if (this.hideForks) repos = repos.filter((r) => !r.fork);
       repos = repos.slice(0, this.limit);
-
-      // Acak setiap hari
-      const seed = new Date().getDate();
-
-      repos.sort(() => Math.sin(seed + Math.random()) - 0.5);
-
-      // Urutkan dari repo yang paling aktif dulu (pushed terbaru)
-      repos.sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
-
-      // Tentukan ukuran kartu acak per reload, tapi tetap jaga repo paling aktif di posisi besar
-      repos.forEach((repo, index) => {
-        if (index === 0) {
-          repo.cardSize = 'size-large';
-        } else {
-          const sizes = ['size-medium', 'size-small'];
-          repo.cardSize = sizes[Math.floor(Math.random() * sizes.length)];
-        }
-      });
 
       if (repos.length === 0) {
         this._renderStatus('Belum ada repo publik.');
@@ -212,71 +183,100 @@ class GithubProjects {
     }
   }
 
-  // render semua kartu ke container
   _render(repos) {
     this.container.innerHTML = '';
 
     const track = document.createElement('div');
-    track.className = 'puzzle-track';
+    track.className = 'puzzle-track animated';
+    
+    // Render elemen kartu awal
     repos.forEach((repo) => track.appendChild(this._buildCard(repo)));
     this.container.appendChild(track);
 
-    this._startSlider();
+    this._setupInfiniteSlider();
+  }
+
+  _setupInfiniteSlider() {
+    const track = this.container.querySelector('.puzzle-track');
+    if (!track) return;
+
+    // Supaya slider memutar terus tanpa henti, kita salin elemen ke depan & belakang (cloning)
+    const cards = Array.from(track.children);
+    if (cards.length < 2) return;
+
+    cards.forEach(card => {
+      const cloneEnd = card.cloneNode(true);
+      const cloneStart = card.cloneNode(true);
+      track.appendChild(cloneEnd);
+      track.insertBefore(cloneStart, track.firstChild);
+    });
+
+    this.allCards = Array.from(track.children);
+    this.realCount = cards.length;
+    this.currentIndex = this.realCount; // Mulai dari set asli pertama
+
+    this._updatePosition(false);
+    this._startAutoplay();
+
+    window.addEventListener('resize', () => this._updatePosition(false));
   }
 
   _move(direction) {
-    const cards = this.container.querySelectorAll('.puzzle-card');
-    if (!cards.length) return;
-    this.activeIndex = (this.activeIndex + direction + cards.length) % cards.length;
-    this._updateSlider();
+    if (this._isTransitioning) return;
+    this._isTransitioning = true;
+
+    this.currentIndex += direction;
+    this._updatePosition(true);
+
+    // Ketika selesai transisi, periksa apakah perlu melompat secara diam-diam (infinite loop)
+    setTimeout(() => {
+      if (this.currentIndex >= this.realCount * 2) {
+        this.currentIndex = this.realCount;
+        this._updatePosition(false);
+      } else if (this.currentIndex < this.realCount) {
+        this.currentIndex = this.realCount * 2 - 1;
+        this._updatePosition(false);
+      }
+      this._isTransitioning = false;
+    }, 500);
   }
 
-  _startSlider() {
-    const cards = this.container.querySelectorAll('.puzzle-card');
-    if (!cards.length) return;
-
-    if (this._sliderTimer) clearInterval(this._sliderTimer);
-    if (this._resizeHandler) window.removeEventListener('resize', this._resizeHandler);
-
-    this._resizeHandler = () => this._updateSlider();
-    window.addEventListener('resize', this._resizeHandler);
-
-    this.activeIndex = 0;
-    this._updateSlider();
-    this._sliderTimer = window.setInterval(() => this._move(1), 3800);
-  }
-
-  _updateSlider() {
-    const cards = this.container.querySelectorAll('.puzzle-card');
+  _updatePosition(animated = true) {
     const track = this.container.querySelector('.puzzle-track');
-    if (!cards.length || !track) return;
+    if (!track || !this.allCards) return;
 
-    const gap = 16;
-    const cardWidth = 220 + gap;
+    if (animated) {
+      track.classList.add('animated');
+    } else {
+      track.classList.remove('animated');
+    }
+
+    const cardWidth = 170; // Sesuai flex-basis di CSS
+    const gap = 14;        // Sesuai gap di CSS
+    const step = cardWidth + gap;
     const containerWidth = this.container.getBoundingClientRect().width;
-    const offset = (containerWidth / 2) - (cardWidth / 2) - (this.activeIndex * cardWidth);
+
+    // Offset agar kartu aktif selalu tepat berada di tengah
+    const offset = (containerWidth / 2) - (cardWidth / 2) - (this.currentIndex * step);
     track.style.transform = `translateX(${offset}px)`;
 
-    cards.forEach((card, index) => {
-      const diff = (index - this.activeIndex + cards.length) % cards.length;
-      const isPrev = diff === cards.length - 1;
-      const isNext = diff === 1;
-      const isHidden = diff > 1 && diff < cards.length - 1;
-      card.classList.toggle('active', index === this.activeIndex);
-      card.classList.toggle('is-prev', isPrev);
-      card.classList.toggle('is-next', isNext);
-      card.classList.toggle('is-hidden', isHidden);
+    // Tandai kartu mana yang aktif di tengah
+    this.allCards.forEach((card, idx) => {
+      card.classList.toggle('active', idx === this.currentIndex);
     });
   }
 
-  // bikin satu kartu <a> dari data repo
+  _startAutoplay() {
+    if (this._sliderTimer) clearInterval(this._sliderTimer);
+    this._sliderTimer = setInterval(() => this._move(1), 3500);
+  }
+
   _buildCard(repo) {
     const card = document.createElement('a');
-    card.className = `puzzle-card ${repo.cardSize}`;
+    card.className = 'puzzle-card';
     card.href = repo.html_url;
     card.target = '_blank';
     card.rel = 'noopener';
-    // social preview image otomatis dari GitHub, gak perlu upload manual
     card.style.backgroundImage = `url('https://opengraph.githubassets.com/1/${repo.full_name}')`;
 
     const tag = repo.language || 'repo';
@@ -292,19 +292,16 @@ class GithubProjects {
     return card;
   }
 
-  // tampilan pesan loading/error/kosong
   _renderStatus(message, isError = false) {
     this.container.innerHTML = `<p class="puzzle-status${isError ? ' is-error' : ''}">${this._escape(message)}</p>`;
   }
 
-  // biar teks dari GitHub (nama/deskripsi repo) gak bisa nyuntik HTML
   _escape(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
   }
 }
-
 
 // ---------- INIT ----------
 document.addEventListener('DOMContentLoaded', () => {

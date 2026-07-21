@@ -1,16 +1,5 @@
 /* =========================================================
    PORTFOLIO — STYLE.CSS
-   Dipisah dari index.html supaya gampang di-maintain.
-   Struktur dikelompokkan per section, urutannya:
-   1. Root variables & reset
-   2. Nav
-   3. Stage & page (kerangka halaman)
-   4. Text column (judul, deskripsi, tombol)
-   5. About — stat bar
-   6. Portfolio — kartu proyek
-   7. Contact — daftar kontak
-   8. Tile transition (efek pindah halaman)
-   9. Mobile block (halaman 404 khusus mobile/tablet)
    ========================================================= */
 
 /* ---------- 1. ROOT VARIABLES & RESET ---------- */
@@ -109,7 +98,6 @@ html, body {
 }
 .page.active { display: block; }
 
-/* scrim gradient supaya teks tetap kebaca di atas background foto apa pun */
 .page::before {
   content: "";
   position: absolute;
@@ -145,7 +133,7 @@ html, body {
 .text-col { max-width: 460px; }
 
 .page[data-page="portfolio"] .text-col {
-  max-width: 780px;
+  max-width: 800px;
   width: 100%;
 }
 
@@ -267,253 +255,187 @@ html, body {
 
 
 /* ===========================================================
-   PORTFOLIO GRID
+   PORTFOLIO SLIDER (INFINITE & SIZED TO TEXT)
 =========================================================== */
 
-.puzzle-shell{
-    width:min(100%, 840px);
-    position:relative;
-    padding-left:48px;
+.puzzle-shell {
+  width: 100%;
+  max-width: 620px; /* Disesuaikan agar pas dengan lebar teks deskripsi */
+  position: relative;
+  padding: 0 36px;  /* Ruang presisi untuk tombol panah */
+  margin-top: 12px;
 }
 
-.puzzle-controls{
-    position:absolute;
-    left:0;
-    top:50%;
-    transform:translateY(-50%);
-    display:flex;
-    justify-content:flex-start;
-    z-index:5;
+.puzzle-controls {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
 }
 
-.puzzle-arrow{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:38px;
-    height:38px;
-    border:1px solid rgba(19, 32, 56, 0.14);
-    border-radius:999px;
-    background:rgba(255,255,255,0.92);
-    color:var(--navy);
-    font-size:1.2rem;
-    font-weight:700;
-    cursor:pointer;
-    box-shadow:0 4px 10px rgba(7, 18, 35, 0.12);
-    transition:transform .2s ease, border-color .2s ease, color .2s ease;
+.puzzle-arrow {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(19, 32, 56, 0.15);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--navy);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(7, 18, 35, 0.1);
+  transition: all 0.2s ease;
 }
 
-.puzzle-arrow:hover{
-    transform:translateY(-1px);
-    border-color:var(--cyan);
-    color:var(--cyan-deep);
+.puzzle-arrow:hover {
+  transform: scale(1.1);
+  border-color: var(--cyan);
+  color: var(--cyan-deep);
+  background: #ffffff;
 }
 
-.puzzle-grid{
-    display:flex;
-    flex-direction:column;
-    align-items:stretch;
-    gap:12px;
-    width:100%;
-    margin-top:8px;
-    margin-left:0;
-    padding:6px 0 10px;
-    overflow:hidden;
-    position:relative;
+.puzzle-grid {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 10px 0;
 }
 
-.puzzle-track{
-    display:flex;
-    gap:16px;
-    align-items:center;
-    transition: transform .75s cubic-bezier(.22, 1, .36, 1);
-    will-change: transform;
-    padding:10px 0 12px;
-    min-height:240px;
+.puzzle-track {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  will-change: transform;
 }
 
+.puzzle-track.animated {
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
 
 /* ================= CARD ================= */
 
-.puzzle-card{
-    position: relative;
-    display: block;
-    flex: 0 0 min(220px, 72vw);
-    width: min(220px, 72vw);
-    height: 220px;
-    overflow: hidden;
-    border-radius: 18px;
-    text-decoration: none;
-    isolation: isolate;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: linear-gradient(145deg, #0d1730, #09111f);
-    box-shadow: 0 6px 14px rgba(7, 18, 35, 0.16);
-    transition: transform .55s ease, box-shadow .55s ease, border-color .55s ease, filter .55s ease, opacity .55s ease;
-    min-height: 180px;
-    transform: perspective(900px) rotateY(16deg) scale(0.9);
-    opacity: 0.72;
-    filter: saturate(0.95);
+.puzzle-card {
+  position: relative;
+  flex: 0 0 170px; /* Ukuran lebih ringkas agar pas di layar */
+  width: 170px;
+  height: 170px;
+  border-radius: 14px;
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #0d1730;
+  box-shadow: 0 4px 12px rgba(7, 18, 35, 0.08);
+  transition: transform 0.4s ease, opacity 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  opacity: 0.5;
+  transform: scale(0.88);
 }
 
-.puzzle-card::before{
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: inherit;
-    background-size: cover;
-    background-position: center;
-    filter: blur(8px) brightness(.5);
-    transform: scale(1.08);
-    z-index: 0;
+.puzzle-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: inherit;
+  background-size: cover;
+  background-position: center;
+  filter: blur(4px) brightness(0.6);
+  transform: scale(1.05);
+  transition: transform 0.4s ease, filter 0.4s ease;
+  z-index: 0;
 }
 
-.puzzle-card.active{
-    transform: perspective(900px) rotateY(0deg) scale(1);
-    box-shadow: 0 10px 24px rgba(7, 18, 35, 0.24);
-    border-color: rgba(47, 182, 232, 0.6);
-    filter: brightness(1.02) saturate(1);
-    opacity: 1;
-    z-index:20;
+/* Card Aktif (Fokus di Tengah) */
+.puzzle-card.active {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow: 0 8px 20px rgba(7, 18, 35, 0.22);
+  border-color: rgba(47, 182, 232, 0.85);
+  z-index: 5;
 }
 
-.puzzle-card.is-prev{
-    transform: perspective(900px) rotateY(20deg) scale(0.88);
-    opacity: 0.7;
-    box-shadow: 0 4px 10px rgba(7, 18, 35, 0.14);
+.puzzle-card.active::before {
+  filter: blur(0px) brightness(0.75);
 }
 
-.puzzle-card.is-next{
-    transform: perspective(900px) rotateY(-20deg) scale(0.88);
-    opacity: 0.7;
-    box-shadow: 0 4px 10px rgba(7, 18, 35, 0.14);
+.puzzle-card.active:hover::before {
+  transform: scale(1.08);
+  filter: blur(0px) brightness(0.85);
 }
 
-.puzzle-card.is-hidden{
-    opacity: 0;
-    transform: scale(0.76);
-    pointer-events: none;
+/* Overlay & Text Content */
+.puzzle-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(7, 18, 35, 0.95) 0%,
+    rgba(7, 18, 35, 0.4) 50%,
+    transparent 100%
+  );
+  z-index: 1;
 }
 
-.puzzle-card:hover{
-    transform: perspective(900px) rotateY(0deg) scale(0.97);
-    box-shadow:0 10px 20px rgba(0,0,0,.2);
-    border-color:rgba(47,182,232,0.5);
-    filter: brightness(1.02);
-    z-index:20;
+.puzzle-content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px;
+  gap: 2px;
 }
 
-/* ================= Overlay ================= */
-
-.puzzle-card::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(
-        to top,
-        rgba(3,10,24,.94) 0%,
-        rgba(8,16,34,.74) 45%,
-        rgba(8,16,34,.2) 100%
-    );
-    z-index:1;
+.puzzle-content .tag {
+  font-size: 0.62rem;
+  color: #35d7ff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
-/* ================= Content ================= */
-
-.puzzle-content{
-    position:absolute;
-    inset:0;
-    z-index:2;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
-    padding:18px 22px 18px 24px;
-    gap:4px;
+.puzzle-content h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.puzzle-content .tag{
-    font-size:.68rem;
-    color:#35d7ff;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:.16em;
-    margin-bottom:2px;
+.puzzle-content p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.7rem;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.puzzle-content h4{
-    margin:0;
-    color:white;
-    font-size:1rem;
-    font-weight:700;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    letter-spacing:.01em;
+.puzzle-status {
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-align: center;
+  padding: 15px 0;
 }
 
-.puzzle-content p{
-    margin:0;
-    color:rgba(255,255,255,.82);
-    font-size:.75rem;
-    line-height:1.45;
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
+.puzzle-status.is-error {
+  color: #ff5577;
 }
 
-/* ================= Layout ================= */
 
-.size-large{
-    height: 220px;
-}
 
-.size-medium{
-    height: 220px;
-}
-
-.size-small{
-    height: 220px;
-}
-
-/* ================= Status ================= */
-
-.puzzle-status{
-    color:var(--muted);
-    font-size:.8rem;
-    flex: 0 0 100%;
-}
-
-.puzzle-status.is-error{
-    color:#ff5577;
-}
-
-/* ================= Mobile ================= */
-
-@media(max-width:900px){
-.puzzle-grid{
-    width:100%;
-    gap:14px;
-}
-
-.puzzle-card{
-    flex-basis: min(84vw, 280px);
-    width: min(84vw, 280px);
-    height: 220px;
-    min-height:180px;
-    border-radius:14px;
-}
-
-.size-large,
-.size-medium,
-.size-small{
-    height: 220px;
-}
-
-.puzzle-controls{
-    justify-content:center;
-}
-
-}
 /* ---------- 7. CONTACT ---------- */
 .contact-list { display: flex; flex-direction: column; gap: 10px; max-width: 340px; }
 .contact-row {
