@@ -1,18 +1,8 @@
 /* =========================================================
-   PORTFOLIO — SCRIPT.JS
-   Disusun pakai class (OOP) biar tiap bagian logic terpisah
-   dan gampang di-edit tanpa ganggu bagian lain:
-
-   - TileTransition  → cuma ngurus animasi ubin grid
-   - PortfolioApp    → ngurus navigasi antar halaman & state
+   PORTFOLIO — SCRIPT.JS (SLIDER PINTEREST BOARD + INFINITE)
    ========================================================= */
 
 class TileTransition {
-  /**
-   * @param {HTMLElement} container - elemen tempat ubin-ubin dibuat (mis. #tiles)
-   * @param {number} cols - jumlah kolom grid ubin
-   * @param {number} rows - jumlah baris grid ubin
-   */
   constructor(container, cols = 10, rows = 6) {
     this.container = container;
     this.cols = cols;
@@ -22,7 +12,6 @@ class TileTransition {
     this._buildTiles();
   }
 
-  // bikin elemen-elemen ubin sekali di awal, disimpan di this.tiles
   _buildTiles() {
     const total = this.cols * this.rows;
     for (let i = 0; i < total; i++) {
@@ -33,11 +22,6 @@ class TileTransition {
     }
   }
 
-  /**
-   * Mainkan animasi ubin "menutup" layar dari satu sisi.
-   * @param {boolean} fromRight - true = nyapu dari kanan, false = dari kiri
-   * @returns {number} durasi total fase menutup (ms), buat di-setTimeout pemanggil
-   */
   cover(fromRight) {
     const stepDelay = 16;
     this.tiles.forEach((tile, idx) => {
@@ -45,7 +29,6 @@ class TileTransition {
       tile.style.transition = 'none';
       tile.style.transform = 'scaleX(0)';
       tile.style.transformOrigin = fromRight ? 'right' : 'left';
-      // force reflow supaya transition 'none' di atas kepakai duluan
       void tile.offsetWidth;
 
       const delay = (fromRight ? this.cols - 1 - col : col) * stepDelay;
@@ -55,10 +38,6 @@ class TileTransition {
     return this.cols * stepDelay + 300;
   }
 
-  /**
-   * Mainkan animasi ubin "membuka" ke sisi lain, nampilin konten baru.
-   * @param {boolean} fromRight - arah yang sama dengan cover() sebelumnya
-   */
   reveal(fromRight) {
     const stepDelay = 16;
     this.tiles.forEach((tile, idx) => {
@@ -73,11 +52,6 @@ class TileTransition {
 
 
 class PortfolioApp {
-  /**
-   * @param {object} options
-   * @param {string[]} options.order - urutan nama halaman, dipakai buat nentuin arah animasi
-   * @param {string} options.startPage - halaman yang aktif pertama kali dibuka
-   */
   constructor({ order, startPage }) {
     this.order = order;
     this.current = startPage;
@@ -91,7 +65,6 @@ class PortfolioApp {
     this._bindNav();
   }
 
-  // pasang event click ke semua tombol nav
   _bindNav() {
     this.navButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -110,7 +83,6 @@ class PortfolioApp {
     });
   }
 
-  // update tombol nav mana yang kelihatan "active"
   _setActiveNav(target) {
     const index = this.order.indexOf(target);
     this.navButtons.forEach((btn) => {
@@ -122,7 +94,6 @@ class PortfolioApp {
     });
   }
 
-  // ganti section .page mana yang ditampilkan
   _setActivePage(target) {
     this.pages.forEach((page) => page.classList.remove('active'));
     const nextPage = document.querySelector(`.page[data-page="${target}"]`);
@@ -130,10 +101,6 @@ class PortfolioApp {
     window.dispatchEvent(new Event('resize'));
   }
 
-  /**
-   * Pindah ke halaman tertentu dengan animasi ubin.
-   * @param {string} target - nama halaman tujuan, harus ada di this.order
-   */
   goTo(target) {
     if (target === this.current || !this.order.includes(target)) return;
 
@@ -158,13 +125,19 @@ class GithubProjects {
     this.hideForks = hideForks;
     this._sliderTimer = null;
     this._isTransitioning = false;
+    this.pinterestImages = [];
   }
 
   async load() {
-    this._renderStatus('Menarik data repo dari GitHub…');
+    this._renderStatus('Menarik data repo & gambar Pinterest…');
+    
+    // 📌 LINK PAPAN PINTEREST KAMU SUDAH DIPASANG DI SINI:
+    const PINTEREST_BOARD_URL = 'https://id.pinterest.com/bakwananget350/pp-anime-cewek/';
+
     try {
-      const url = `https://api.github.com/users/${this.username}/repos?sort=pushed&direction=desc&per_page=100`;
-      const res = await fetch(url);
+      // 1. Fetch data repo dari GitHub
+      const githubUrl = `https://api.github.com/users/${this.username}/repos?sort=pushed&direction=desc&per_page=100`;
+      const res = await fetch(githubUrl);
       if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
 
       let repos = await res.json();
@@ -176,10 +149,40 @@ class GithubProjects {
         return;
       }
 
+      // 2. Fetch foto dari papan Pinterest
+      await this._fetchPinterestImages(PINTEREST_BOARD_URL);
+
+      // 3. Render slider
       this._render(repos);
+
     } catch (err) {
-      this._renderStatus('Gagal ambil data GitHub, coba refresh lagi ya.', true);
-      console.error('[GithubProjects] fetch gagal:', err);
+      this._renderStatus('Gagal ambil data, coba refresh lagi ya.', true);
+      console.error('[GithubProjects] Fetch error:', err);
+    }
+  }
+
+  async _fetchPinterestImages(boardUrl) {
+    try {
+      // Ubah URL papan ke format RSS Feed Pinterest
+      const cleanBoardUrl = boardUrl.split('?')[0].replace(/\/$/, '');
+      const rssUrl = `${cleanBoardUrl}.rss`;
+      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+
+      if (data.status === 'ok' && data.items && data.items.length > 0) {
+        this.pinterestImages = data.items.map(item => {
+          const match = item.description.match(/src="(https:\/\/i\.pinimg\.com\/[^"]+)"/);
+          if (match && match[1]) {
+            // Ambil gambar kualitas baik (564x)
+            return match[1].replace(/\/\d+x\//, '/564x/');
+          }
+          return null;
+        }).filter(Boolean);
+      }
+    } catch (err) {
+      console.warn('Gambar Pinterest tidak dapat dimuat, menggunakan gambar default GitHub.', err);
     }
   }
 
@@ -189,8 +192,7 @@ class GithubProjects {
     const track = document.createElement('div');
     track.className = 'puzzle-track animated';
     
-    // Render elemen kartu awal
-    repos.forEach((repo) => track.appendChild(this._buildCard(repo)));
+    repos.forEach((repo, index) => track.appendChild(this._buildCard(repo, index)));
     this.container.appendChild(track);
 
     this._setupInfiniteSlider();
@@ -200,10 +202,10 @@ class GithubProjects {
     const track = this.container.querySelector('.puzzle-track');
     if (!track) return;
 
-    // Supaya slider memutar terus tanpa henti, kita salin elemen ke depan & belakang (cloning)
     const cards = Array.from(track.children);
     if (cards.length < 2) return;
 
+    // Duplikasi elemen untuk efek memutar/infinite carousel
     cards.forEach(card => {
       const cloneEnd = card.cloneNode(true);
       const cloneStart = card.cloneNode(true);
@@ -213,7 +215,7 @@ class GithubProjects {
 
     this.allCards = Array.from(track.children);
     this.realCount = cards.length;
-    this.currentIndex = this.realCount; // Mulai dari set asli pertama
+    this.currentIndex = this.realCount;
 
     this._updatePosition(false);
     this._startAutoplay();
@@ -228,7 +230,6 @@ class GithubProjects {
     this.currentIndex += direction;
     this._updatePosition(true);
 
-    // Ketika selesai transisi, periksa apakah perlu melompat secara diam-diam (infinite loop)
     setTimeout(() => {
       if (this.currentIndex >= this.realCount * 2) {
         this.currentIndex = this.realCount;
@@ -251,16 +252,14 @@ class GithubProjects {
       track.classList.remove('animated');
     }
 
-    const cardWidth = 170; // Sesuai flex-basis di CSS
-    const gap = 14;        // Sesuai gap di CSS
+    const cardWidth = 170;
+    const gap = 14;
     const step = cardWidth + gap;
     const containerWidth = this.container.getBoundingClientRect().width;
 
-    // Offset agar kartu aktif selalu tepat berada di tengah
     const offset = (containerWidth / 2) - (cardWidth / 2) - (this.currentIndex * step);
     track.style.transform = `translateX(${offset}px)`;
 
-    // Tandai kartu mana yang aktif di tengah
     this.allCards.forEach((card, idx) => {
       card.classList.toggle('active', idx === this.currentIndex);
     });
@@ -271,13 +270,23 @@ class GithubProjects {
     this._sliderTimer = setInterval(() => this._move(1), 3500);
   }
 
-  _buildCard(repo) {
+  _buildCard(repo, index) {
     const card = document.createElement('a');
     card.className = 'puzzle-card';
     card.href = repo.html_url;
     card.target = '_blank';
     card.rel = 'noopener';
-    card.style.backgroundImage = `url('https://opengraph.githubassets.com/1/${repo.full_name}')`;
+
+    // Ambil gambar dari hasil parsing Papan Pinterest "pp-anime-cewek"
+    let imageUrl = '';
+    if (this.pinterestImages.length > 0) {
+      const imgIdx = index % this.pinterestImages.length;
+      imageUrl = this.pinterestImages[imgIdx];
+    } else {
+      imageUrl = `https://opengraph.githubassets.com/1/${repo.full_name}`;
+    }
+
+    card.style.backgroundImage = `url('${imageUrl}')`;
 
     const tag = repo.language || 'repo';
     const desc = repo.description || 'Belum ada deskripsi di repo ini.';
@@ -303,6 +312,7 @@ class GithubProjects {
   }
 }
 
+
 // ---------- INIT ----------
 document.addEventListener('DOMContentLoaded', () => {
   const app = new PortfolioApp({
@@ -310,14 +320,12 @@ document.addEventListener('DOMContentLoaded', () => {
     startPage: 'home',
   });
 
-  // biar tombol onclick="goTo('...')" langsung di HTML tetap jalan
   window.goTo = (target) => app.goTo(target);
 
-  // ganti 'dimaspradana' kalau username GitHub kamu beda
   const GITHUB_USERNAME = 'pradanadimas534';
   const projectsContainer = document.getElementById('githubProjects');
   if (projectsContainer) {
-    const projectsApp = new GithubProjects(GITHUB_USERNAME, projectsContainer, { limit: 6 });
+    const projectsApp = new GithubProjects(GITHUB_USERNAME, projectsContainer, { limit: 8 });
 
     document.querySelectorAll('.puzzle-arrow').forEach((btn) => {
       btn.addEventListener('click', () => {
